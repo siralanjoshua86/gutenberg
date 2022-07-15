@@ -40,7 +40,7 @@ export default function TemplatePartSelectionModal( {
 	templatePartId,
 	onTemplatePartSelect,
 	onPatternSelect,
-	onCancel,
+	onClose,
 } ) {
 	const areaType = useTemplatePartArea( area );
 	const templatePartAreaLabel =
@@ -68,7 +68,7 @@ export default function TemplatePartSelectionModal( {
 				templatePartAreaLabel
 			) }
 			closeLabel={ __( 'Cancel' ) }
-			onRequestClose={ onCancel }
+			onRequestClose={ onClose }
 		>
 			{ !! templateParts?.length && (
 				<div>
