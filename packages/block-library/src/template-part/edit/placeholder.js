@@ -13,8 +13,8 @@ import {
 	useAlternativeTemplateParts,
 	useCreateTemplatePartFromBlocks,
 	useTemplatePartArea,
-} from './utils/hooks';
-import TitleModal from './title-modal';
+} from '../utils/hooks';
+import TitleModal from '../components/title-modal';
 
 export default function TemplatePartPlaceholder( {
 	area,

@@ -16,7 +16,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { createTemplatePartId } from './create-template-part-id';
+import createTemplatePartId from './create-template-part-id';
 
 /**
  * Retrieves the available template parts for the given area.

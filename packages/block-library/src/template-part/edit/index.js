@@ -25,15 +25,15 @@ import { useState, createInterpolateElement } from '@wordpress/element';
  * Internal dependencies
  */
 import TemplatePartPlaceholder from './placeholder';
-import TemplatePartSelectionModal from './selection-modal';
+import TemplatePartSelectionModal from '../components/selection-modal';
 import { TemplatePartAdvancedControls } from './advanced-controls';
 import TemplatePartInnerBlocks from './inner-blocks';
-import { createTemplatePartId } from './utils/create-template-part-id';
+import createTemplatePartId from '../utils/create-template-part-id';
 import {
 	useAlternativeBlockPatterns,
 	useAlternativeTemplateParts,
 	useTemplatePartArea,
-} from './utils/hooks';
+} from '../utils/hooks';
 
 export default function TemplatePartEdit( {
 	attributes,

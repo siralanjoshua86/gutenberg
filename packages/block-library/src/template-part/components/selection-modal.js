@@ -19,8 +19,8 @@ import {
 	useAlternativeBlockPatterns,
 	useAlternativeTemplateParts,
 	useCreateTemplatePartFromBlocks,
-} from './utils/hooks';
-import { createTemplatePartId } from './utils/create-template-part-id';
+} from '../utils/hooks';
+import createTemplatePartId from '../utils/create-template-part-id';
 
 export default function TemplatePartSelectionModal( {
 	setAttributes,
