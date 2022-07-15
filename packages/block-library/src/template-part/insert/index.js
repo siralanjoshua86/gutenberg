@@ -1,44 +1,14 @@
 /**
- * External dependencies
- */
-import { kebabCase } from 'lodash';
-
-/**
  * WordPress dependencies
  */
-import { serialize } from '@wordpress/blocks';
 import { store as coreStore } from '@wordpress/core-data';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import TemplatePartSelectionModal from '../components/selection-modal';
-
-function createTemplatePartPostData(
-	area,
-	blocks = [],
-	title = __( 'Untitled Template Part' )
-) {
-	// Currently template parts only allow latin chars.
-	// Fallback slug will receive suffix by default.
-	const cleanSlug =
-		kebabCase( title ).replace( /[^\w-]+/g, '' ) || 'wp-custom-part';
-
-	// If we have `area` set from block attributes, means an exposed
-	// block variation was inserted. So add this prop to the template
-	// part entity on creation. Afterwards remove `area` value from
-	// block attributes.
-	return {
-		title,
-		slug: cleanSlug,
-		content: serialize( blocks ),
-		// `area` is filterable on the server and defaults to `UNCATEGORIZED`
-		// if provided value is not allowed.
-		area,
-	};
-}
+import createTemplatePartPostData from '../utils/create-template-part-post-data';
 
 export default function NewTemplatePartInsert( {
 	rootClientId,

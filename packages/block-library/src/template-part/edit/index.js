@@ -6,7 +6,7 @@ import { isEmpty } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import {
 	BlockSettingsMenuControls,
 	BlockTitle,
@@ -20,15 +20,17 @@ import { Spinner, MenuItem } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as coreStore } from '@wordpress/core-data';
 import { useState, createInterpolateElement } from '@wordpress/element';
+import { store as noticesStore } from '@wordpress/notices';
 
 /**
  * Internal dependencies
  */
 import TemplatePartPlaceholder from './placeholder';
-import TemplatePartSelectionModal from './selection-modal';
+import TemplatePartSelectionModal from '../components/selection-modal';
 import { TemplatePartAdvancedControls } from './advanced-controls';
 import TemplatePartInnerBlocks from './inner-blocks';
 import createTemplatePartId from '../utils/create-template-part-id';
+import createTemplatePartPostData from '../utils/create-template-part-post-data';
 import {
 	useAlternativeBlockPatterns,
 	useAlternativeTemplateParts,
@@ -85,6 +87,10 @@ export default function TemplatePartEdit( {
 			},
 			[ templatePartId, clientId ]
 		);
+
+	const { saveEntityRecord } = useDispatch( coreStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { replaceInnerBlocks } = useDispatch( blockEditorStore );
 	const { templateParts } = useAlternativeTemplateParts(
 		area,
 		templatePartId
@@ -208,8 +214,50 @@ export default function TemplatePartEdit( {
 					area={ area }
 					templatePartId={ templatePartId }
 					rootClientId={ rootClientId }
-					clientId={ clientId }
-					setAttributes={ setAttributes }
+					onTemplatePartSelect={ ( pattern ) => {
+						const { templatePart } = pattern;
+						setAttributes( {
+							slug: templatePart.slug,
+							theme: templatePart.theme,
+							area: undefined,
+						} );
+						createSuccessNotice(
+							sprintf(
+								/* translators: %s: template part title. */
+								__( 'Template Part "%s" inserted.' ),
+								templatePart.title?.rendered ||
+									templatePart.slug
+							),
+							{
+								type: 'snackbar',
+							}
+						);
+						setIsTemplatePartSelectionOpen( false );
+					} }
+					onPatternSelect={ async ( pattern, blocks ) => {
+						const isReplacingTemplatePartContent =
+							!! templatePartId;
+						if ( isReplacingTemplatePartContent ) {
+							replaceInnerBlocks( clientId, blocks );
+						} else {
+							const postData = createTemplatePartPostData(
+								area,
+								blocks,
+								pattern.title
+							);
+							const templatePart = await saveEntityRecord(
+								'postType',
+								'wp_template_part',
+								postData
+							);
+							setAttributes( {
+								slug: templatePart.slug,
+								theme: templatePart.theme,
+								area: undefined,
+							} );
+						}
+						setIsTemplatePartSelectionOpen( false );
+					} }
 					onClose={ () => setIsTemplatePartSelectionOpen( false ) }
 				/>
 			) }
