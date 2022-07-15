@@ -45,6 +45,8 @@ export default function TemplatePartEdit( {
 	const templatePartId = createTemplatePartId( theme, slug );
 	const [ hasAlreadyRendered, RecursionProvider ] =
 		useNoRecursiveRenders( templatePartId );
+	const [ isTemplatePartSelectionOpen, setIsTemplatePartSelectionOpen ] =
+		useState( false );
 
 	// Set the postId block attribute if it did not exist,
 	// but wait until the inner blocks have loaded to allow
@@ -97,10 +99,6 @@ export default function TemplatePartEdit( {
 		{ __unstableIsDisabled: hasBlockOverlay }
 	);
 	const isPlaceholder = ! slug;
-	const showPatternSelectionImmediately =
-		isPlaceholder && ( area === 'header' || area === 'footer' );
-	const [ isTemplatePartSelectionOpen, setIsTemplatePartSelectionOpen ] =
-		useState( showPatternSelectionImmediately );
 	const isEntityAvailable = ! isPlaceholder && ! isMissing && isResolved;
 	const TagName = tagName || areaObject.tagName;
 
@@ -219,7 +217,6 @@ export default function TemplatePartEdit( {
 						templatePartId={ templatePartId }
 						clientId={ clientId }
 						area={ area }
-						showTemplateParts={ ! showPatternSelectionImmediately }
 						setAttributes={ setAttributes }
 						onClose={ () =>
 							setIsTemplatePartSelectionOpen( false )

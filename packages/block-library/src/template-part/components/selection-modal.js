@@ -24,7 +24,6 @@ import createTemplatePartId from '../utils/create-template-part-id';
 
 export default function TemplatePartSelectionModal( {
 	setAttributes,
-	showTemplateParts,
 	onClose,
 	templatePartId = null,
 	area,
@@ -39,16 +38,13 @@ export default function TemplatePartSelectionModal( {
 	);
 	// We can map template parts to block patters to reuse the BlockPatternsList UI
 	const templartPartsAsBlockPatterns = useMemo( () => {
-		if ( ! showTemplateParts ) {
-			return [];
-		}
 		return templateParts.map( ( templatePart ) => ( {
 			name: createTemplatePartId( templatePart.theme, templatePart.slug ),
 			title: templatePart.title.rendered,
 			blocks: parse( templatePart.content.raw ),
 			templatePart,
 		} ) );
-	}, [ templateParts, showTemplateParts ] );
+	}, [ templateParts ] );
 	const shownTemplateParts = useAsyncList( templartPartsAsBlockPatterns );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const blockPatterns = useAlternativeBlockPatterns( area, clientId );
