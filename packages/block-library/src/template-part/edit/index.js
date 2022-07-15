@@ -16,7 +16,7 @@ import {
 	__experimentalUseNoRecursiveRenders as useNoRecursiveRenders,
 	__experimentalUseBlockOverlayActive as useBlockOverlayActive,
 } from '@wordpress/block-editor';
-import { Spinner, Modal, MenuItem } from '@wordpress/components';
+import { Spinner, MenuItem } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as coreStore } from '@wordpress/core-data';
 import { useState, createInterpolateElement } from '@wordpress/element';
@@ -25,7 +25,7 @@ import { useState, createInterpolateElement } from '@wordpress/element';
  * Internal dependencies
  */
 import TemplatePartPlaceholder from './placeholder';
-import TemplatePartSelectionModal from '../components/selection-modal';
+import TemplatePartSelectionModal from './selection-modal';
 import { TemplatePartAdvancedControls } from './advanced-controls';
 import TemplatePartInnerBlocks from './inner-blocks';
 import createTemplatePartId from '../utils/create-template-part-id';
@@ -51,42 +51,45 @@ export default function TemplatePartEdit( {
 	// Set the postId block attribute if it did not exist,
 	// but wait until the inner blocks have loaded to allow
 	// new edits to trigger this.
-	const { isResolved, innerBlocks, isMissing, area } = useSelect(
-		( select ) => {
-			const { getEditedEntityRecord, hasFinishedResolution } =
-				select( coreStore );
-			const { getBlocks } = select( blockEditorStore );
+	const { rootClientId, isResolved, innerBlocks, isMissing, area } =
+		useSelect(
+			( select ) => {
+				const { getEditedEntityRecord, hasFinishedResolution } =
+					select( coreStore );
+				const { getBlocks, getBlockRootClientId } =
+					select( blockEditorStore );
 
-			const getEntityArgs = [
-				'postType',
-				'wp_template_part',
-				templatePartId,
-			];
-			const entityRecord = templatePartId
-				? getEditedEntityRecord( ...getEntityArgs )
-				: null;
-			const _area = entityRecord?.area || attributes.area;
-			const hasResolvedEntity = templatePartId
-				? hasFinishedResolution(
-						'getEditedEntityRecord',
-						getEntityArgs
-				  )
-				: false;
+				const getEntityArgs = [
+					'postType',
+					'wp_template_part',
+					templatePartId,
+				];
+				const entityRecord = templatePartId
+					? getEditedEntityRecord( ...getEntityArgs )
+					: null;
+				const _area = entityRecord?.area || attributes.area;
+				const hasResolvedEntity = templatePartId
+					? hasFinishedResolution(
+							'getEditedEntityRecord',
+							getEntityArgs
+					  )
+					: false;
 
-			return {
-				innerBlocks: getBlocks( clientId ),
-				isResolved: hasResolvedEntity,
-				isMissing: hasResolvedEntity && isEmpty( entityRecord ),
-				area: _area,
-			};
-		},
-		[ templatePartId, clientId ]
-	);
+				return {
+					rootClientId: getBlockRootClientId( clientId ),
+					innerBlocks: getBlocks( clientId ),
+					isResolved: hasResolvedEntity,
+					isMissing: hasResolvedEntity && isEmpty( entityRecord ),
+					area: _area,
+				};
+			},
+			[ templatePartId, clientId ]
+		);
 	const { templateParts } = useAlternativeTemplateParts(
 		area,
 		templatePartId
 	);
-	const blockPatterns = useAlternativeBlockPatterns( area, clientId );
+	const blockPatterns = useAlternativeBlockPatterns( area, rootClientId );
 	const hasReplacements = !! templateParts.length || !! blockPatterns.length;
 	const areaObject = useTemplatePartArea( area );
 	const hasBlockOverlay = useBlockOverlayActive( clientId );
@@ -155,7 +158,7 @@ export default function TemplatePartEdit( {
 					<TemplatePartPlaceholder
 						area={ attributes.area }
 						templatePartId={ templatePartId }
-						clientId={ clientId }
+						rootClientId={ rootClientId }
 						setAttributes={ setAttributes }
 						onOpenSelectionModal={ () =>
 							setIsTemplatePartSelectionOpen( true )
@@ -201,28 +204,14 @@ export default function TemplatePartEdit( {
 				</TagName>
 			) }
 			{ isTemplatePartSelectionOpen && (
-				<Modal
-					overlayClassName="block-editor-template-part__selection-modal"
-					title={ sprintf(
-						// Translators: %s as template part area title ("Header", "Footer", etc.).
-						__( 'Choose a %s' ),
-						areaObject.label.toLowerCase()
-					) }
-					closeLabel={ __( 'Cancel' ) }
-					onRequestClose={ () =>
-						setIsTemplatePartSelectionOpen( false )
-					}
-				>
-					<TemplatePartSelectionModal
-						templatePartId={ templatePartId }
-						clientId={ clientId }
-						area={ area }
-						setAttributes={ setAttributes }
-						onClose={ () =>
-							setIsTemplatePartSelectionOpen( false )
-						}
-					/>
-				</Modal>
+				<TemplatePartSelectionModal
+					area={ area }
+					templatePartId={ templatePartId }
+					rootClientId={ rootClientId }
+					clientId={ clientId }
+					setAttributes={ setAttributes }
+					onClose={ () => setIsTemplatePartSelectionOpen( false ) }
+				/>
 			) }
 		</RecursionProvider>
 	);

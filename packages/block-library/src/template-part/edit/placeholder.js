@@ -18,7 +18,7 @@ import TitleModal from '../components/title-modal';
 
 export default function TemplatePartPlaceholder( {
 	area,
-	clientId,
+	rootClientId,
 	templatePartId,
 	onOpenSelectionModal,
 	setAttributes,
@@ -27,7 +27,7 @@ export default function TemplatePartPlaceholder( {
 		area,
 		templatePartId
 	);
-	const blockPatterns = useAlternativeBlockPatterns( area, clientId );
+	const blockPatterns = useAlternativeBlockPatterns( area, rootClientId );
 	const [ showTitleModal, setShowTitleModal ] = useState( false );
 	const areaObject = useTemplatePartArea( area );
 	const createFromBlocks = useCreateTemplatePartFromBlocks(

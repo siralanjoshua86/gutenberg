@@ -6,21 +6,15 @@ import { kebabCase } from 'lodash';
 /**
  * WordPress dependencies
  */
-import {
-	__experimentalBlockPatternsList as BlockPatternsList,
-	store as blockEditorStore,
-} from '@wordpress/block-editor';
 import { serialize } from '@wordpress/blocks';
-import { Modal } from '@wordpress/components';
 import { store as coreStore } from '@wordpress/core-data';
-import { useAsyncList } from '@wordpress/compose';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { useTemplatePartArea } from '../edit/utils/hooks';
+import TemplatePartSelectionModal from '../components/selection-modal';
 
 function createTemplatePartPostData(
 	area,
@@ -54,66 +48,47 @@ export default function NewTemplatePartInsert( {
 } ) {
 	const area = item?.initialAttributes?.area;
 	const { saveEntityRecord } = useDispatch( coreStore );
-	const areaObject = useTemplatePartArea( area );
-
-	const blockPatterns = useSelect(
-		( select ) => {
-			const blockNameWithArea = area
-				? `core/template-part/${ area }`
-				: 'core/template-part';
-			const { __experimentalGetPatternsByBlockTypes } =
-				select( blockEditorStore );
-			return __experimentalGetPatternsByBlockTypes(
-				blockNameWithArea,
-				rootClientId
-			);
-		},
-		[ area, rootClientId ]
-	);
-
-	const shownBlockPatterns = useAsyncList( blockPatterns );
 
 	return (
-		<Modal
-			className="block-editor-template-part__selection-modal"
-			title={ sprintf(
-				// Translators: %s as template part area title ("Header", "Footer", etc.).
-				__( 'Choose a %s' ),
-				areaObject?.label.toLowerCase() ?? __( 'template part' )
-			) }
-			closeLabel={ __( 'Cancel' ) }
-			onRequestClose={ onCancel }
-		>
-			{ !! blockPatterns.length && (
-				<BlockPatternsList
-					blockPatterns={ blockPatterns }
-					shownPatterns={ shownBlockPatterns }
-					onClickPattern={ async ( pattern, blocks ) => {
-						const templatePartPostData =
-							await createTemplatePartPostData(
-								area,
-								blocks,
-								pattern.title
-							);
+		<TemplatePartSelectionModal
+			area={ area }
+			rootClientId={ rootClientId }
+			onTemplatePartSelect={ async ( pattern ) => {
+				const templatePart = pattern.templatePart;
+				const inserterItem = {
+					name: 'core/template-part',
+					initialAttributes: {
+						slug: templatePart.slug,
+						theme: templatePart.theme,
+					},
+				};
+				const focusBlock = true;
+				onSelect( inserterItem, focusBlock );
+			} }
+			onPatternSelect={ async ( pattern, blocks ) => {
+				const templatePartPostData = await createTemplatePartPostData(
+					area,
+					blocks,
+					pattern.title
+				);
 
-						const templatePart = await saveEntityRecord(
-							'postType',
-							'wp_template_part',
-							templatePartPostData
-						);
+				const templatePart = await saveEntityRecord(
+					'postType',
+					'wp_template_part',
+					templatePartPostData
+				);
 
-						const inserterItem = {
-							name: 'core/template-part',
-							initialAttributes: {
-								slug: templatePart.slug,
-								theme: templatePart.theme,
-							},
-						};
-						const focusBlock = true;
-						onSelect( inserterItem, focusBlock );
-					} }
-				/>
-			) }
-		</Modal>
+				const inserterItem = {
+					name: 'core/template-part',
+					initialAttributes: {
+						slug: templatePart.slug,
+						theme: templatePart.theme,
+					},
+				};
+				const focusBlock = true;
+				onSelect( inserterItem, focusBlock );
+			} }
+			onClose={ onCancel }
+		/>
 	);
 }
