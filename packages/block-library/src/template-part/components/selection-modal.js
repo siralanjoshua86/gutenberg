@@ -72,13 +72,7 @@ export default function TemplatePartSelectionModal( {
 		>
 			{ !! templateParts?.length && (
 				<div>
-					<h2>
-						{ sprintf(
-							// Translators: %s as template part area title ("Header", "Footer", etc.).
-							__( 'Existing %s' ),
-							templatePartAreaLabel
-						) }
-					</h2>
+					<h2>{ __( 'Existing template parts' ) }</h2>
 					<BlockPatternsList
 						blockPatterns={ templatePartPatterns }
 						shownPatterns={ shownTemplatePartPatterns }
