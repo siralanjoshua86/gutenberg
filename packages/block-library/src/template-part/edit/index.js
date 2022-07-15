@@ -235,9 +235,8 @@ export default function TemplatePartEdit( {
 						setIsTemplatePartSelectionOpen( false );
 					} }
 					onPatternSelect={ async ( pattern, blocks ) => {
-						const isReplacingTemplatePartContent =
-							!! templatePartId;
-						if ( isReplacingTemplatePartContent ) {
+						const hasSelectedTemplatePart = !! templatePartId;
+						if ( hasSelectedTemplatePart ) {
 							replaceInnerBlocks( clientId, blocks );
 						} else {
 							const postData = createTemplatePartPostData(
