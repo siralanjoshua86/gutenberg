@@ -118,7 +118,7 @@ const Popover = (
 		__unstableShift = false,
 		...contentProps
 	},
-	ref
+	forwardedRef
 ) => {
 	if ( range ) {
 		deprecated( 'range prop in Popover component', {
@@ -129,6 +129,7 @@ const Popover = (
 
 	const arrowRef = useRef( null );
 	const anchorRefFallback = useRef( null );
+
 	const isMobileViewport = useViewportMatch( 'medium', '<' );
 	const isExpanded = expandOnMobile && isMobileViewport;
 	const hasArrow = ! isExpanded && ! noArrow;
@@ -270,7 +271,6 @@ const Popover = (
 		bottom: 'top',
 		left: 'right',
 	}[ computedPlacement.split( '-' )[ 0 ] ];
-	const mergedRefs = useMergeRefs( [ floating, dialogRef, ref ] );
 
 	// Updates references
 	useLayoutEffect( () => {
@@ -359,6 +359,12 @@ const Popover = (
 			origin: placementToAnimationOrigin( computedPlacement ),
 		} );
 
+	const mergedFloatingRef = useMergeRefs( [
+		floating,
+		dialogRef,
+		forwardedRef,
+	] );
+
 	// Disable reason: We care to capture the _bubbled_ events from inputs
 	// within popover as inferring close intent.
 
@@ -376,7 +382,7 @@ const Popover = (
 				}
 			) }
 			{ ...contentProps }
-			ref={ mergedRefs }
+			ref={ mergedFloatingRef }
 			{ ...dialogProps }
 			tabIndex="-1"
 			style={
