@@ -351,7 +351,7 @@ const Popover = (
 			refs.floating.current,
 			update
 		);
-	}, [ anchorRef, anchorRect, getAnchorRect ] );
+	}, [ anchorRef, anchorRect, getAnchorRect, reference, update ] );
 
 	// This is only needed for a smooth transition when moving blocks.
 	useLayoutEffect( () => {
