@@ -28,7 +28,7 @@ import {
 } from '@wordpress/block-editor';
 import { EntityProvider } from '@wordpress/core-data';
 
-import { useDispatch, useSelect, useRegistry } from '@wordpress/data';
+import { useDispatch, useSuspenseSelect, useRegistry } from '@wordpress/data';
 import {
 	PanelBody,
 	ToggleControl,
@@ -195,7 +195,7 @@ function Navigation( {
 		uncontrolledInnerBlocks,
 		isInnerBlockSelected,
 		hasSubmenus,
-	} = useSelect(
+	} = useSuspenseSelect(
 		( select ) => {
 			const { getBlock, getBlocks, hasSelectedInnerBlock } =
 				select( blockEditorStore );

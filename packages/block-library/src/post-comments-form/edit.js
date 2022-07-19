@@ -16,7 +16,7 @@ import {
 import { Button } from '@wordpress/components';
 import { useEntityProp, store as coreStore } from '@wordpress/core-data';
 import { __, _x, sprintf } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
+import { useSuspenseSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -44,13 +44,13 @@ export default function PostCommentsFormEdit( {
 
 	const isSiteEditor = postType === undefined || postId === undefined;
 
-	const { defaultCommentStatus } = useSelect(
+	const { defaultCommentStatus } = useSuspenseSelect(
 		( select ) =>
 			select( blockEditorStore ).getSettings()
 				.__experimentalDiscussionSettings
 	);
 
-	const postTypeSupportsComments = useSelect( ( select ) =>
+	const postTypeSupportsComments = useSuspenseSelect( ( select ) =>
 		postType
 			? !! select( coreStore ).getPostType( postType )?.supports.comments
 			: false

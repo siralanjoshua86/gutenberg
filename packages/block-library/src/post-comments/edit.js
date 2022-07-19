@@ -14,7 +14,7 @@ import {
 	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { __, sprintf } from '@wordpress/i18n';
-import { useSelect } from '@wordpress/data';
+import { useSuspenseSelect } from '@wordpress/data';
 import { useEntityProp, store as coreStore } from '@wordpress/core-data';
 import { useDisabled } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
@@ -39,7 +39,7 @@ export default function PostCommentsEdit( {
 		postId
 	);
 
-	const { avatarURL, defaultCommentStatus } = useSelect(
+	const { avatarURL, defaultCommentStatus } = useSuspenseSelect(
 		( select ) =>
 			select( blockEditorStore ).getSettings()
 				.__experimentalDiscussionSettings
@@ -47,7 +47,7 @@ export default function PostCommentsEdit( {
 
 	const isSiteEditor = postType === undefined || postId === undefined;
 
-	const postTypeSupportsComments = useSelect( ( select ) =>
+	const postTypeSupportsComments = useSuspenseSelect( ( select ) =>
 		postType
 			? !! select( coreStore ).getPostType( postType )?.supports.comments
 			: false

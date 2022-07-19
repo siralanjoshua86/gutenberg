@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { useSuspenseSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 import { store as editorStore } from '@wordpress/editor';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -116,7 +116,7 @@ export const entitiesConfig = {
 };
 
 export const useExistingTemplates = () => {
-	return useSelect(
+	return useSuspenseSelect(
 		( select ) =>
 			select( coreStore ).getEntityRecords( 'postType', 'wp_template', {
 				per_page: -1,
@@ -126,7 +126,7 @@ export const useExistingTemplates = () => {
 };
 
 export const useDefaultTemplateTypes = () => {
-	return useSelect(
+	return useSuspenseSelect(
 		( select ) =>
 			select( editorStore ).__experimentalGetDefaultTemplateTypes(),
 		[]
@@ -134,7 +134,7 @@ export const useDefaultTemplateTypes = () => {
 };
 
 const usePublicPostTypes = () => {
-	const postTypes = useSelect(
+	const postTypes = useSuspenseSelect(
 		( select ) => select( coreStore ).getPostTypes( { per_page: -1 } ),
 		[]
 	);
@@ -164,7 +164,7 @@ export const usePostTypePage = () => {
 };
 
 const usePublicTaxonomies = () => {
-	const taxonomies = useSelect(
+	const taxonomies = useSuspenseSelect(
 		( select ) => select( coreStore ).getTaxonomies( { per_page: -1 } ),
 		[]
 	);
@@ -250,7 +250,7 @@ const useEntitiesInfo = (
 			return accumulator;
 		}, {} );
 	}, [ entities, existingTemplates ] );
-	const recordsToExcludePerEntity = useSelect(
+	const recordsToExcludePerEntity = useSuspenseSelect(
 		( select ) => {
 			if ( ! slugsToExcludePerEntity ) {
 				return;
@@ -274,7 +274,7 @@ const useEntitiesInfo = (
 		},
 		[ slugsToExcludePerEntity ]
 	);
-	const entitiesInfo = useSelect(
+	const entitiesInfo = useSuspenseSelect(
 		( select ) => {
 			return entities?.reduce( ( accumulator, { slug } ) => {
 				const existingEntitiesIds =

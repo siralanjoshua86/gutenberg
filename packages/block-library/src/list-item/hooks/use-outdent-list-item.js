@@ -7,7 +7,7 @@ import { first, last } from 'lodash';
  * WordPress dependencies
  */
 import { useCallback } from '@wordpress/element';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect, useSuspenseSelect, useDispatch } from '@wordpress/data';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { cloneBlock } from '@wordpress/blocks';
 
@@ -17,7 +17,7 @@ import { cloneBlock } from '@wordpress/blocks';
 import { createListItem } from '../utils';
 
 export default function useOutdentListItem( clientId ) {
-	const { canOutdent } = useSelect(
+	const { canOutdent } = useSuspenseSelect(
 		( innerSelect ) => {
 			const { getBlockRootClientId } = innerSelect( blockEditorStore );
 			const grandParentId = getBlockRootClientId(

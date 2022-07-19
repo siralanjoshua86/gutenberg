@@ -8,7 +8,7 @@ import {
 	__experimentalPreviewOptions as PreviewOptions,
 	NavigableToolbar,
 } from '@wordpress/block-editor';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSuspenseSelect, useDispatch } from '@wordpress/data';
 import { PinnedItems } from '@wordpress/interface';
 import { _x, __ } from '@wordpress/i18n';
 import { listView, plus } from '@wordpress/icons';
@@ -48,7 +48,7 @@ export default function Header( {
 		listViewShortcut,
 		isLoaded,
 		isVisualMode,
-	} = useSelect( ( select ) => {
+	} = useSuspenseSelect( ( select ) => {
 		const {
 			__experimentalGetPreviewDeviceType,
 			getEditedPostType,
