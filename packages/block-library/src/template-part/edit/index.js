@@ -47,8 +47,6 @@ export default function TemplatePartEdit( {
 	const templatePartId = createTemplatePartId( theme, slug );
 	const [ hasAlreadyRendered, RecursionProvider ] =
 		useNoRecursiveRenders( templatePartId );
-	const [ isTemplatePartSelectionOpen, setIsTemplatePartSelectionOpen ] =
-		useState( false );
 
 	// Set the postId block attribute if it did not exist,
 	// but wait until the inner blocks have loaded to allow
@@ -87,6 +85,9 @@ export default function TemplatePartEdit( {
 			},
 			[ templatePartId, clientId ]
 		);
+
+	const [ isTemplatePartSelectionOpen, setIsTemplatePartSelectionOpen ] =
+		useState( ! slug && [ 'header', 'footer' ].includes( area ) );
 
 	const { saveEntityRecord } = useDispatch( coreStore );
 	const { createSuccessNotice } = useDispatch( noticesStore );
