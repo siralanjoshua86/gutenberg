@@ -192,9 +192,18 @@ function AddCustomTemplateModal( { onClose, onSelect, entityForSuggestions } ) {
 						<FlexItem
 							isBlock
 							onClick={ () => {
-								const { slug, title, description } =
-									entityForSuggestions.template;
-								onSelect( { slug, title, description } );
+								const {
+									slug,
+									title,
+									description,
+									templatePrefix,
+								} = entityForSuggestions.template;
+								onSelect( {
+									slug,
+									title,
+									description,
+									templatePrefix,
+								} );
 							} }
 						>
 							<Heading level={ 5 }>

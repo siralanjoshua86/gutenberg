@@ -40,6 +40,7 @@ import {
 	useDefaultTemplateTypes,
 	useTaxonomiesMenuItems,
 	usePostTypeMenuItems,
+	getTemplateHierarchy,
 } from './utils';
 import AddCustomGenericTemplateModal from './add-custom-generic-template-modal';
 import { useHistory } from '../routes';
@@ -92,13 +93,18 @@ export default function NewTemplate( { postType } ) {
 
 	async function createTemplate( template, isWPSuggestion = true ) {
 		try {
-			const { title, description, slug } = template;
+			const { title, description, slug, templatePrefix } = template;
 			let templateContent = template.content;
 			// Try to find fallback content from existing templates.
 			if ( ! templateContent ) {
+				const templateHierarchy = getTemplateHierarchy( slug, {
+					templatePrefix,
+					isCustom: ! isWPSuggestion,
+				} );
 				const fallbackTemplate = await apiFetch( {
 					path: addQueryArgs( '/wp/v2/templates/lookup', {
 						slug,
+						hierarchy: templateHierarchy,
 					} ),
 				} );
 				templateContent = fallbackTemplate.content;
