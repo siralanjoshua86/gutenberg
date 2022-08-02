@@ -58,7 +58,7 @@ class WP_Style_Engine_CSS_Declarations {
 		}
 
 		// Trim the value. If empty, bail early.
-		$value = trim( $value );
+		$value = $this->sanitize_value( $value );
 		if ( '' === $value ) {
 			return;
 		}
@@ -121,13 +121,19 @@ class WP_Style_Engine_CSS_Declarations {
 	public function get_declarations_string() {
 		$declarations_array  = $this->get_declarations();
 		$declarations_output = '';
+
 		foreach ( $declarations_array as $property => $value ) {
-			$filtered_declaration = esc_html( safecss_filter_attr( "{$property}: {$value}" ) );
+			// Account for CSS variables.
+			if ( 0 === strpos( $property, '--' ) || ( 'display' === $property && 'none' !== $value ) ) {
+				$declarations_output .= "{$property}:{$value};";
+				continue;
+			}
+			$filtered_declaration = safecss_filter_attr( "{$property}:{$value}" );
 			if ( $filtered_declaration ) {
-				$declarations_output .= $filtered_declaration . '; ';
+				$declarations_output .= $filtered_declaration . ';';
 			}
 		}
-		return rtrim( $declarations_output );
+		return $declarations_output;
 	}
 
 	/**
@@ -139,5 +145,20 @@ class WP_Style_Engine_CSS_Declarations {
 	 */
 	protected function sanitize_property( $property ) {
 		return sanitize_key( $property );
+	}
+
+	/**
+	 * Sanitize values.
+	 *
+	 * @param string $value The CSS value.
+	 *
+	 * @return string The sanitized value.
+	 */
+	protected function sanitize_value( $value ) {
+		// Escape HTML.
+		$value = esc_html( $value );
+		// Fix quotes to account for URLs.
+		$value = str_replace( array( '&#039;', '&#39;', '&#034;', '&#34;', '&quot;', '&apos;' ), array( "'", "'", '"', '"', '"', "'" ), $value );
+		return trim( $value );
 	}
 }
