@@ -531,7 +531,7 @@ class WP_Style_Engine_Test extends WP_UnitTestCase {
 				'selector' => 'article',
 			)
 		);
-		$store            = WP_Style_Engine::get_instance()::get_store( 'block-supports' );
+		$store            = WP_Style_Engine::get_store( 'block-supports' );
 		$rule             = $store->get_all_rules()['article'];
 		$this->assertSame( $generated_styles['css'], $rule->get_css() );
 	}
@@ -546,7 +546,7 @@ class WP_Style_Engine_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'WP_Style_Engine_CSS_Rules_Store', $store );
 
 		// Check that the style engine knows about the store.
-		$stored_store = WP_Style_Engine::get_instance()::get_store( 'test-store' );
+		$stored_store = WP_Style_Engine::get_store( 'test-store' );
 		$this->assertInstanceOf( 'WP_Style_Engine_CSS_Rules_Store', $stored_store );
 	}
 

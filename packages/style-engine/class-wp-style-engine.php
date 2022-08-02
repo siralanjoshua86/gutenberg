@@ -279,26 +279,6 @@ class WP_Style_Engine {
 	}
 
 	/**
-	 * Private constructor to prevent instantiation.
-	 */
-	private function __construct() {}
-
-	/**
-	 * Utility method to retrieve the main instance of the class.
-	 *
-	 * The instance will be created if it does not exist yet.
-	 *
-	 * @return WP_Style_Engine The main instance.
-	 */
-	public static function get_instance() {
-		if ( null === static::$instance ) {
-			static::$instance = new static();
-		}
-
-		return static::$instance;
-	}
-
-	/**
 	 * Stores a CSS rule using the provide CSS selector and CSS declarations.
 	 *
 	 * @param string $store_key        A valid store key.
@@ -615,7 +595,7 @@ function wp_style_engine_get_styles( $block_styles, $options = array() ) {
  *
  * @access public
  *
- * @param string $store_key       A valid store key.
+ * @param string       $store_key       A valid store key.
  * @param array<array> $css_rules array(
  *     array(
  *         'selector'         => (string) A CSS selector.
